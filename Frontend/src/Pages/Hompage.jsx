@@ -1,7 +1,14 @@
 import React from "react";
+import SearchBar from "../Components/SearchBar";
+import JobList from "../Components/JobList";
 
 const Hompage = () => {
-  return <div>Hompage</div>;
+  return (
+    <div>
+      <SearchBar />
+      <JobList />
+    </div>
+  );
 };
 
 export default Hompage;
