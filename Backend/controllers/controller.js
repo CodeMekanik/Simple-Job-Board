@@ -2,9 +2,10 @@ import Job from "../models/Jobs.js";
 import { isValidObjectId } from "mongoose";
 
 export async function getAllJobs(req, res) {
+  const { limit, skip } = req.query;
+  console.log("limit", limit, "skip", skip);
   try {
-    const jobs = await Job.find();
-
+    const jobs = await Job.find().skip(skip).limit(limit);
     res.status(200).json(jobs);
   } catch (error) {
     console.log(error);
