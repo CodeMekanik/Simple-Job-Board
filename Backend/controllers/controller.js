@@ -50,6 +50,18 @@ export function updateJob(req, res) {
   console.log("updating job");
 }
 
-export function deleteJob(req, res) {
-  console.log("deleting job");
+export async function deleteJob(req, res) {
+  const { id } = req.params;
+  const validId = isValidObjectId(id);
+  try {
+    if (!validId) {
+      return res.status(400).json({ message: "Invalid job ID" });
+    }
+    const job = await Job.findByIdAndDelete(id);
+
+    res.status(200).json({ message: `Job with ${id} deleted successfully ` });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
