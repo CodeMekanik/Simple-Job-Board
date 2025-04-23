@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
-const Pagination = ({ page, setPage }) => {
+const Pagination = ({ page, setPage, docNum }) => {
+  const pages = Math.ceil(docNum / 10);
+
   return (
     <div>
       <div className="flex justify-center items-center mt-5 gap-2">
@@ -15,7 +17,7 @@ const Pagination = ({ page, setPage }) => {
           </button>
         )}
 
-        {page < 3 && (
+        {page < pages && (
           <button
             onClick={() => {
               setPage(page + 1);
@@ -25,6 +27,10 @@ const Pagination = ({ page, setPage }) => {
             Next
           </button>
         )}
+        <p className="text-gray-500 font-bold text-sm">
+          {" "}
+          page {page} of {pages}
+        </p>
       </div>
     </div>
   );

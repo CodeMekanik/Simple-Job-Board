@@ -1,6 +1,16 @@
 import Job from "../models/Jobs.js";
 import { isValidObjectId } from "mongoose";
 
+export async function getDocNum(req, res) {
+  try {
+    const count = await Job.countDocuments();
+    res.status(200).json({ count });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 export async function getAllJobs(req, res) {
   const { limit, skip } = req.query;
   console.log("limit", limit, "skip", skip);
@@ -42,7 +52,7 @@ export function createJob(req, res) {
     newJob.save();
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: error });
   }
 }
 

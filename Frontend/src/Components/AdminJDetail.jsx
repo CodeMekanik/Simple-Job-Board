@@ -2,54 +2,51 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { deleteJob } from "../Functions/deleteJob";
 
-const JobItemAdmin = ({ job }) => {
-  const {
-    _id,
-    title,
-    company,
-    description,
-    location,
-    category,
-    datePosted,
-    salary,
-  } = job;
+const AdminJobDetail = ({ job }) => {
   const [iDelete, setIDelete] = useState(false);
   const [iUpdate, setIUpdate] = useState(false);
-
+  const { _id, title, description, location, category, salary, company } = job;
   const navigate = useNavigate();
-  const handleClick = () => {
-    navigate(`/admin/${_id}`);
-  };
-
   return (
-    <div>
-      <div className="text-black bg-white shadow-md rounded-lg p-4 mb-4 w-[300px] hover:bg-gray-50">
-        <div
-          onClick={() => {
-            handleClick();
-          }}
-        >
+    <div className=" md:flex gap-6 justify-between items-center ">
+      <div className="mt-3.5">
+        {" "}
+        <p className="text-gray-600 text-right">
+          🏪🏪 Company : <span className="font-bold text-lg"> {company}</span>
+        </p>
+        <h1 className=" text-2xl mt-3 font-extrabold">
+          👷‍♂️ {title}{" "}
+          <span className="font-bold text-sm text-gray-600">Needed</span>
+        </h1>
+        <div className="mt-3 p-5 shadow-lg rounded-3xl">
+          {" "}
+          <p className="text-2xl font-bold"> Job Description:</p>
+          <p className="text-gray-800 font-semibold mt-3 ">{description}</p>
+        </div>
+      </div>
+      <div className="mt-3 bg-gray-800 flex-shrink-0 w-[28rem] m-auto text-white p-5 shadow-lg rounded-3xl">
+        {" "}
+        <div className="flex justify-between gap-7 items-center ">
+          <div className="text-lg ">
+            <p className="font-semibold"> Location:</p>
+            📍 <span className="font-bold">{location}</span>{" "}
+          </div>
           <div>
-            <p className="text-gray-400 text-sm"> 🏪 {company}</p>
-          </div>
-          <h2 className="text-lg font-bold mt-3"> 👷‍♂️ {title}</h2>
-          <div className="text-gray-600 text-sm mb-2 flex gap-5 mt-3">
-            {" "}
-            <p>📍 {location}</p> <p className="font-semibold"> {category}</p>{" "}
-          </div>
-
-          <div className="flex justify-between items-center mt-4">
-            <p>posted at {datePosted.substring(0, 10)}</p>
-            <p className="font-bold">${salary} </p>
+            <p className="font-semibold text-lg">Salary:</p>{" "}
+            <p className="font-extrabold text-4xl"> ${salary}</p>
           </div>
         </div>
+        <p className="font-semibold text-center mt-5 text-lg">
+          Work Category :
+        </p>
+        <p className="font-bold text-center text-3xl">{category}</p>
         {!iDelete && !iUpdate && (
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex justify-between gap-7 items-center ">
             <button
               onClick={() => {
                 setIDelete(true);
               }}
-              className="text-white block bg-red-600 rounded-md p-2 font-bold hover:font-semibold hover:bg-red-400"
+              className="bg-red-500 mt-5 block m-auto text-2xl rounded-lg p-3 font-bold hover:bg-red-400 textt-white"
             >
               Delete
             </button>
@@ -57,13 +54,12 @@ const JobItemAdmin = ({ job }) => {
               onClick={() => {
                 setIUpdate(true);
               }}
-              className="text-white block bg-blue-800 rounded-md p-2 font-bold hover:font-semibold hover:bg-blue-600"
+              className="bg-blue-500 mt-5 block m-auto text-2xl rounded-lg p-3 font-bold hover:bg-blue-400 textt-white"
             >
               Update
             </button>
           </div>
         )}
-
         {iDelete && !iUpdate && (
           <div>
             <p className="text-center text-red-600 mt-2">
@@ -78,7 +74,7 @@ const JobItemAdmin = ({ job }) => {
                 onClick={() => {
                   deleteJob(_id);
 
-                  window.location.reload();
+                  navigate("/admin");
                 }}
                 className="text-white block bg-red-600 rounded-md p-2 font-bold hover:font-semibold hover:bg-red-400"
               >
@@ -95,7 +91,6 @@ const JobItemAdmin = ({ job }) => {
             </div>
           </div>
         )}
-
         {!iDelete && iUpdate && (
           <div>
             <p className="text-center text-red-600 mt-2">
@@ -130,4 +125,4 @@ const JobItemAdmin = ({ job }) => {
   );
 };
 
-export default JobItemAdmin;
+export default AdminJobDetail;

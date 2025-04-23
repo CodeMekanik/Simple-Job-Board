@@ -1,7 +1,9 @@
 import React from "react";
+import { useParams } from "react-router";
 
 const JobUpdateForm = () => {
-  return <div>JobUpdateForm</div>;
+  const { id } = useParams();
+  return <div>JobUpdateForm for {id}</div>;
 };
 
 export default JobUpdateForm;
