@@ -1,35 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createJob } from "../Functions/createJob";
 import { useNavigate } from "react-router";
+import { fetchSJob } from "../Functions/fetchSJob";
+import { updateJob } from "../Functions/updateJob";
 
-const NewJobForm = () => {
-  const [jobTitle, setJobTitle] = useState("");
+const JobFormUpdate = ({ id }) => {
+  const [jobTitle, setJobTitle] = useState("hello");
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [location, setLocation] = useState("");
   const [salary, setSalary] = useState("");
   const [category, setCategory] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [created, setCreated] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track submitting state
+  const [updated, setUpdated] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function fetchJob() {
+      const { job } = await fetchSJob(id);
+      setJobTitle(job.title);
+      setCompanyName(job.company);
+      setJobDescription(job.description);
+      setLocation(job.location);
+      setSalary(job.salary);
+      setCategory(job.category);
+    }
+    fetchJob();
+  }, [id]); // Add `id` as a dependency for the useEffect to refetch when `id` changes
 
   const handleChange = (e, set) => {
     set(e.target.value);
   };
 
-  const handleRedirect = () => {
-    setCreated(true);
-    setTimeout(() => {
-      setRedirecting(true);
-    }, 1000);
-
-    setTimeout(() => {
-      navigate("/admin");
-    }, 2000);
-  };
-  const handleCreateJob = async () => {
-    console.log("submiting form");
+  const handleUpdateJob = async () => {
+    console.log("Submitting form...");
     const jobData = {
       title: jobTitle,
       company: companyName,
@@ -38,39 +43,46 @@ const NewJobForm = () => {
       location,
       salary: Number(salary),
     };
-    await createJob(jobData);
-    handleRedirect();
+    await updateJob(id, jobData);
+  };
+
+  const handleRedirect = () => {
+    setUpdated(true);
+    setTimeout(() => {
+      setRedirecting(true);
+    }, 1000);
+
+    setTimeout(() => {
+      navigate("/admin");
+    }, 2000);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await handleCreateJob();
+    if (isSubmitting) return; // If already submitting, return early
+
+    setIsSubmitting(true); // Set submitting to true to prevent multiple submissions
+
+    await handleUpdateJob(); // Perform the update job
+    handleRedirect(); // Redirect after job update
+    setIsSubmitting(false); // Reset submitting state
   };
 
   return (
     <div className="flex justify-center items-center">
       <div className="mt-3 max-w-[600px] flex-grow-1 min-w-[400px] shadow-lg p-4 rounded-lg">
         <div>
-          {" "}
           <h1 className="text-3xl font-bold text-center text-gray-800">
-            Create a New Job
+            Update Job
           </h1>
         </div>
 
-        <form
-          onSubmit={async (e) => {
-            setSubmitted(true);
-            handleSubmit(e);
-          }}
-          className="flex flex-col gap-4 mt-4"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
           <input
             type="text"
             value={jobTitle}
-            onChange={(e) => {
-              handleChange(e, setJobTitle);
-            }}
+            onChange={(e) => handleChange(e, setJobTitle)}
             placeholder="Job Title"
             className="border rounded-lg p-2"
             required
@@ -92,18 +104,14 @@ const NewJobForm = () => {
           ></textarea>
           <input
             type="text"
-            onChange={(e) => {
-              handleChange(e, setLocation);
-            }}
+            onChange={(e) => handleChange(e, setLocation)}
             value={location}
             placeholder="Location"
             className="border rounded-lg p-2"
             required
           />
           <input
-            onChange={(e) => {
-              handleChange(e, setSalary);
-            }}
+            onChange={(e) => handleChange(e, setSalary)}
             value={salary}
             type="number"
             placeholder="Salary"
@@ -111,12 +119,10 @@ const NewJobForm = () => {
             required
           />
           <input
-            onChange={(e) => {
-              handleChange(e, setCategory);
-            }}
+            onChange={(e) => handleChange(e, setCategory)}
             value={category}
             type="text"
-            placeholder="category"
+            placeholder="Category"
             className="border rounded-lg p-2"
             required
           />
@@ -124,21 +130,23 @@ const NewJobForm = () => {
           <button
             type="submit"
             className={`${
-              !submitted
-                ? "bg-blue-500 hover:bg-blue-400 text-white"
-                : "bg-gray-300 cursor-wait text-gray-500"
-            }  font-bold rounded-lg p-2`}
+              isSubmitting
+                ? "bg-gray-300 cursor-wait text-gray-500"
+                : "bg-blue-500 hover:bg-blue-400 text-white"
+            } font-bold rounded-lg p-2`}
+            disabled={isSubmitting} // Disable the button if submitting
           >
-            Create Job
+            {isSubmitting ? "Updating..." : "Update Job"}
           </button>
         </form>
+
         <div className="text-green-500 font-bold text-lg mt-5 text-right">
-          {created && <p> New Job Created Successfully ✔</p>}
-          {redirecting && <p>Redirecting to Admin page</p>}
+          {updated && <p>Job Updated Successfully ✔</p>}
+          {redirecting && <p>Redirecting to Admin page...</p>}
         </div>
       </div>
     </div>
   );
 };
 
-export default NewJobForm;
+export default JobFormUpdate;

@@ -34,8 +34,9 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <SearchBar search={search} setSearch={setSearch} />
-
+      <p className="bg-gray-200 p-2 rounded-lg text-center text-lg font-bold mt-3">
+        {docNum} numbers of {docNum > 1 ? "jobs" : "job"} found
+      </p>
       <div
         onClick={() => {
           navigate("/admin/new");

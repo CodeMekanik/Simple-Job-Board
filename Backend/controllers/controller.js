@@ -56,8 +56,22 @@ export function createJob(req, res) {
   }
 }
 
-export function updateJob(req, res) {
-  console.log("updating job");
+export async function updateJob(req, res) {
+  const { id } = req.params;
+  const validId = isValidObjectId(id);
+  try {
+    if (!validId) {
+      return res.status(400).json({ message: "Invalid job ID" });
+    }
+    const job = await Job.findByIdAndUpdate(id, req.body, { new: true });
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    res.status(200).json(job);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
 
 export async function deleteJob(req, res) {
